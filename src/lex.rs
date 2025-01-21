@@ -1,6 +1,8 @@
 pub mod lex {
+    use std::collections::VecDeque;
 
-    #[derive(Debug)]
+    // TODO: probably slow
+    #[derive(Debug, PartialEq)]
     #[allow(unused)]
     pub enum Token {
         IDENT(String),
@@ -19,14 +21,12 @@ pub mod lex {
         OSPAREN, // [
         CSPAREN, // ]
     }
-    pub struct Lexer(String);
+
+    pub struct Lexer(pub String);
 
     impl Lexer {
-        pub fn new(code: String) -> Self {
-            Self(code)
-        }
         #[allow(unstable_features)]
-        pub fn lexify(&self) -> Vec<Token> {
+        pub fn lexify(&self) -> VecDeque<Token> {
             use std::collections::VecDeque;
 
             let mut tokens: VecDeque<Token> = VecDeque::new();
