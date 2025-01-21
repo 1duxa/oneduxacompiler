@@ -52,7 +52,11 @@ pub mod lex {
                             let next_char = symbols.pop_front();
                             curr_ident.push(next_char.unwrap());
                         }
-                        tokens.push_back(Token::IDENT(curr_ident.iter().collect::<String>()));
+                        let ident = curr_ident.iter().collect::<String>();
+                        match ident.as_str() {
+                            "make" => tokens.push_back(Token::MAKE),
+                            _ => tokens.push_back(Token::IDENT(ident.to_string())),
+                        }
                     }
                     ';' => {
                         tokens.push_back(Token::SEMI);
