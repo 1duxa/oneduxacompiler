@@ -4,7 +4,7 @@ pub mod parser {
     use std::collections::VecDeque;
     #[derive(Debug)]
     pub struct StatementVariable {
-        ident: String,
+        pub ident: String,
         pub expr: Expression,
     }
     #[derive(Debug)]
