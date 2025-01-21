@@ -2,26 +2,29 @@
 pub mod parser {
     use crate::lex::lex::Token;
     use std::collections::VecDeque;
-    // TODO: Swap Option to Result. Should bubble up errors instead of panic
-    // TODO: Create expression
     #[derive(Debug)]
-    pub struct Statement {
+    pub struct StatementVariable {
         ident: String,
-        expr: Expression,
+        pub expr: Expression,
+    }
+    #[derive(Debug)]
+    pub enum Statement {
+        MAKE(StatementVariable),
+        ASSIGN(StatementVariable),
     }
     #[derive(Debug)]
     pub struct BinExpr {
-        lhs: Box<Expression>,
-        rhs: Box<Expression>,
-        operator: Token,
+        pub lhs: Box<Expression>,
+        pub rhs: Box<Expression>,
+        pub operator: Token,
     }
     #[derive(Debug)]
-    enum Expression {
+    pub enum Expression {
         BINEXPR(BinExpr),
         TERM(Term),
     }
     #[derive(Debug)]
-    enum Term {
+    pub enum Term {
         INTLIT(i64),
         IDENT(String),
         PAREN(Box<Expression>),
@@ -98,10 +101,10 @@ pub mod parser {
             lhs
         }
 
-        fn parse_make_statement(&mut self) -> Statement {
+        fn parse_make_statement(&mut self) -> StatementVariable {
             if let Some(name) = self.consume_ident() {
                 self.consume_discard(Token::EQ);
-                let stat = Statement {
+                let stat = StatementVariable {
                     expr: self.parse_expression(0),
                     ident: name,
                 };
@@ -111,9 +114,9 @@ pub mod parser {
                 panic!("Expected ident");
             }
         }
-        fn parse_assign_statement(&mut self, ident: String) -> Statement {
+        fn parse_assign_statement(&mut self, ident: String) -> StatementVariable {
             self.consume_discard(Token::EQ);
-            Statement {
+            StatementVariable {
                 expr: self.parse_expression(0),
                 ident,
             }
@@ -123,8 +126,10 @@ pub mod parser {
             while self.0.len() > 0 {
                 if let Some(token) = self.0.pop_front() {
                     match token {
-                        Token::MAKE => statments.push(self.parse_make_statement()),
-                        Token::IDENT(ident) => statments.push(self.parse_assign_statement(ident)),
+                        Token::MAKE => statments.push(Statement::MAKE(self.parse_make_statement())),
+                        Token::IDENT(ident) => {
+                            statments.push(Statement::ASSIGN(self.parse_assign_statement(ident)))
+                        }
                         _ => panic!("Unknown statement"),
                     }
                 }

@@ -77,7 +77,7 @@ pub mod lex {
                     '}' => tokens.push_back(Token::CCPAREN),
                     '[' => tokens.push_back(Token::OSPAREN),
                     ']' => tokens.push_back(Token::CSPAREN),
-                    ' ' => continue,
+                    ' ' | '\n' => continue,
                     _ => panic!(
                         "Dont know who you are, mister {}\nchar at: {}",
                         curr_symbol,
