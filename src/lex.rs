@@ -1,19 +1,24 @@
 pub mod lex {
-    use std::collections::VecDeque;
 
     #[derive(Debug)]
+    #[allow(unused)]
     pub enum Token {
-        MAKE,
         IDENT(String),
         NUM(i64),
-        EQ,
-        SEMI,
+        MAKE,    // make
+        EQ,      // ;
+        SEMI,    // ;
+        PLUS,    // +
+        MUL,     // *
+        DIV,     // /
+        SUB,     // -
+        OPAREN,  // (
+        CPAREN,  // )
+        OCPAREN, // {
+        CCPAREN, // }
+        OSPAREN, // [
+        CSPAREN, // ]
     }
-    ///
-    ///  make variable = 5;
-    ///
-    ///
-    ///
     pub struct Lexer(String);
 
     impl Lexer {
@@ -22,9 +27,11 @@ pub mod lex {
         }
         #[allow(unstable_features)]
         pub fn lexify(&self) -> Vec<Token> {
+            use std::collections::VecDeque;
+
             let mut tokens: VecDeque<Token> = VecDeque::new();
             let mut symbols = self.0.chars().collect::<VecDeque<char>>();
-
+            let initial_len = symbols.len();
             while symbols.len() > 0 {
                 let curr_symbol = symbols.pop_front().unwrap();
                 match curr_symbol {
@@ -58,14 +65,23 @@ pub mod lex {
                             _ => tokens.push_back(Token::IDENT(ident.to_string())),
                         }
                     }
-                    ';' => {
-                        tokens.push_back(Token::SEMI);
-                    }
-                    '=' => {
-                        tokens.push_back(Token::EQ);
-                    }
+                    ';' => tokens.push_back(Token::SEMI),
+                    '=' => tokens.push_back(Token::EQ),
+                    '+' => tokens.push_back(Token::PLUS),
+                    '-' => tokens.push_back(Token::SUB),
+                    '*' => tokens.push_back(Token::MUL),
+                    '/' => tokens.push_back(Token::DIV),
+                    '(' => tokens.push_back(Token::OPAREN),
+                    ')' => tokens.push_back(Token::CPAREN),
+                    '{' => tokens.push_back(Token::OCPAREN),
+                    '}' => tokens.push_back(Token::CCPAREN),
+                    '[' => tokens.push_back(Token::OSPAREN),
+                    ']' => tokens.push_back(Token::CSPAREN),
                     ' ' => continue,
-                    _ => panic!("Dont know who you are"),
+                    _ => panic!(
+                        "Dont know who you are \n char at: {}",
+                        initial_len - symbols.len()
+                    ),
                 }
             }
             tokens.into()
