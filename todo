@@ -1,0 +1,10 @@
+
+ID   | TASK                              | PRIORITY
+1    | Create types(string,bool)         | 1
+2    | if statment                       | 1
+8    | switch statment                   | 1
+3    | Function declaration              | 5
+4    | Allocation                        | 10
+5    | Alloc free                        | 10
+6    | Refactor code                     | 11
+7    | Create graph for parser?          | 999
