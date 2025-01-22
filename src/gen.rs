@@ -1,4 +1,5 @@
-mod gen {
+#[allow(unused)]
+pub mod gen {
     use std::collections::HashSet;
 
     use crate::{
@@ -12,29 +13,15 @@ mod gen {
         stack_location: i64,
         variables: HashSet<Variable>,
     }
+    
     #[derive(PartialEq, Eq,Hash)]
     pub struct Variable {
         name: String,
         location: i64,
     }
-
     impl Generator {
-        fn operator_assembly(operator:&Token) -> String {
-            match operator {
-                    Token::PLUS =>"     add rax, rbx".into(),
-                    Token::SUB => "     sub rax, rbx".into(),
-                    Token::MUL => "     mul rbx".into(),
-                    Token::DIV => "     div rbx".into(),
-                    _ => panic!("Bad operator, {:#?}",operator),
-                }            
-        }
-        fn push(&mut self, reg: &str) {
-            self.assembly += format!("     push {}{}", reg, "\n").as_str();
-            self.stack_location += 1;
-        }
-        fn pop(&mut self, reg: &str) {
-            self.assembly += format!("     pop {}{}", reg, "\n").as_str();
-            self.stack_location -= 1;
+        pub fn new(program:Vec<Statement>) -> Self {
+            Self { program, assembly: "".into(), stack_location: 0, variables: HashSet::new() }
         }
         fn gen_bin_expr(&mut self, expr: &BinExpr)  {
             self.gen_expr(expr.rhs.as_ref());
@@ -89,12 +76,32 @@ mod gen {
         }
         pub fn gen_prog(&mut self) -> String {
             self.assembly += "global _start\n_start:\n";
-            self.program.iter().for_each(|stmt| self.gen_statement(stmt));
- 
+            let statements: Vec<_> = self.program.drain(..).collect();
+
+            for statement in statements {
+                self.gen_statement(&statement); // Safely borrow `self` here
+            }
             self.assembly += "     mov rax, 60\n";
             self.assembly += "     mov rdi, 0\n";
             self.assembly += "     syscall\n";
             self.assembly.clone()
+        }
+        fn operator_assembly(operator:&Token) -> String {
+            match operator {
+                    Token::PLUS =>"     add rax, rbx".into(),
+                    Token::SUB => "     sub rax, rbx".into(),
+                    Token::MUL => "     mul rbx".into(),
+                    Token::DIV => "     div rbx".into(),
+                    _ => panic!("Bad operator, {:#?}",operator),
+                }            
+        }
+        fn push(&mut self, reg: &str) {
+            self.assembly += format!("     push {}{}", reg, "\n").as_str();
+            self.stack_location += 1;
+        }
+        fn pop(&mut self, reg: &str) {
+            self.assembly += format!("     pop {}{}", reg, "\n").as_str();
+            self.stack_location -= 1;
         }
     }
 }

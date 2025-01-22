@@ -1,3 +1,4 @@
+use gen::gen::Generator;
 use lex::lex::Lexer;
 use parser::parser::Parser;
 
@@ -7,15 +8,15 @@ mod parser;
 
 fn main() {
     let lexer = Lexer(
-        "
-    make variable = 514 - 32;
-    make second = 8*3;
-    second = variable *2
     "
-        .into(),
-    );
+    make int variable = 514 - 32;
+    make int second = 8*3;
+    make string gg = \"s\"
+    
+    ".into());
     let tokens = lexer.lexify();
-    //println!("{:?}", tokens);
     let mut parser = Parser(tokens);
-    println!("{:#?}", parser.parse_prog());
+    let program =  parser.parse_prog();
+    let mut generator = Generator::new(program);
+    println!("{}",generator.gen_prog())
 }

@@ -8,6 +8,9 @@ pub mod lex {
         IDENT(String),
         NUM(i64),
         MAKE,    // make
+        INT,     // int
+        STRING,  // string
+        BOOL,    // bool
         EQ,      // ;
         SEMI,    // ;
         PLUS,    // +
@@ -62,6 +65,10 @@ pub mod lex {
                         let ident = curr_ident.iter().collect::<String>();
                         match ident.as_str() {
                             "make" => tokens.push_back(Token::MAKE),
+                            "int" => tokens.push_back(Token::INT),
+                            "string" => tokens.push_back(Token::STRING),
+                            "bool" => tokens.push_back(Token::BOOL),
+
                             _ => tokens.push_back(Token::IDENT(ident.to_string())),
                         }
                     }
