@@ -79,7 +79,7 @@ pub mod gen {
             let statements: Vec<_> = self.program.drain(..).collect();
 
             for statement in statements {
-                self.gen_statement(&statement); // Safely borrow `self` here
+                self.gen_statement(&statement); 
             }
             self.assembly += "     mov rax, 60\n";
             self.assembly += "     mov rdi, 0\n";

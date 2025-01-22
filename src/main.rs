@@ -1,4 +1,4 @@
-use std::{fs::File, io::Read};
+use std::{fs::File, io::{Read, Write}};
 
 use gen::gen::Generator;
 use lex::lex::Lexer;
@@ -9,7 +9,7 @@ mod lex;
 mod parser;
 
 fn main() {
-    let path = r"C:\Users\User\Desktop\code\langs\rust\oneduxalang\src\test.duxa";
+    let path = r"src/test.duxa";
     let file = File::open(path);
     if file.is_err() {panic!("Can't find file {}",path)}
     let mut buf = String::new();
@@ -21,5 +21,10 @@ fn main() {
     let mut parser = Parser(tokens);
     let program =  parser.parse_prog();
     let mut generator = Generator::new(program);
-    println!("{}",generator.gen_prog())
+
+    let output_file = "./out.asm";
+    let output_file =File::create(output_file);
+    if output_file.is_err() { panic!("Failed to create output, {:?}",output_file)}
+    let output_write_result = output_file.unwrap().write_all(generator.gen_prog().as_bytes());
+    output_write_result.unwrap()
 }
