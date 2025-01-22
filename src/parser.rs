@@ -80,7 +80,7 @@ pub mod parser {
             let mut lhs = match self.parse_term() {
                 Term::INTLIT(n) => Expression::TERM(Term::INTLIT(n)),
                 Term::IDENT(name) => Expression::TERM(Term::IDENT(name)),
-                Term::PAREN(_) => panic!("Unexpected standalone parenthesis"),
+                Term::PAREN(expr) => *expr,
             };
             while let Some(operator) = self.0.front() {
                 let prec: Option<i8>;

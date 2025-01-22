@@ -1,1 +1,2 @@
-make variable = 514;
+make variable = 514 + 1;
+make second = (variable / 5) + 1;

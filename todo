@@ -1,8 +1,11 @@
 
 ID   | TASK                              | PRIORITY
-1    | Create types(string,bool)         | 1
-2    | if statment                       | 1
-8    | switch statment                   | 1
+1    | Create types(string,bool)         | 0
+10   | file I/O                          | 1
+9    | scope statement                   | 2
+2    | if statement                      | 3
+2    | while statement                   | 3
+8    | switch statement                  | 4
 3    | Function declaration              | 5
 4    | Allocation                        | 10
 5    | Alloc free                        | 10
