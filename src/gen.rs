@@ -21,7 +21,7 @@ pub mod gen {
     }
     impl Generator {
         pub fn new(program:Vec<Statement>) -> Self {
-            Self { program, assembly: "".into(), stack_location: 0, variables: HashSet::new() }
+            Self { program, assembly: "".into(), stack_location: 1, variables: HashSet::new() }
         }
         fn gen_bin_expr(&mut self, expr: &BinExpr)  {
             self.gen_expr(expr.rhs.as_ref());
@@ -39,7 +39,7 @@ pub mod gen {
                         panic!("Variable not found {}",ident);
                     }
                     else {
-                        let offset = format!("QWORD [rsp + {}{}" , (self.stack_location - var.unwrap().location - 1) * 8 , "]\n");
+                        let offset = format!("QWORD [rsp + {}{}" , (self.stack_location - var.unwrap().location) * 8 , "]\n");
                         self.push(&offset);
                     }
                 }
