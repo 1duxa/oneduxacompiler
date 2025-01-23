@@ -8,9 +8,9 @@ pub mod lex {
         IDENT(String),
         NUM(i64),
         MAKE,    // make
-        INT,     // int
-        STRING,  // string
-        BOOL,    // bool
+        INT,     // int type
+        STR,     // string type
+        BOOL,    // bool type
         EQ,      // ;
         SEMI,    // ;
         PLUS,    // +
@@ -23,6 +23,7 @@ pub mod lex {
         CCPAREN, // }
         OSPAREN, // [
         CSPAREN, // ]
+        QUOT,    // "
     }
 
     pub struct Lexer(pub String);
@@ -57,7 +58,7 @@ pub mod lex {
                         let mut curr_ident: Vec<char> = Vec::new();
                         curr_ident.push(curr_symbol);
                         while !symbols.front().is_none()
-                            && Self::is_in_a_to_z(symbols.front().unwrap())
+                            && Self::is_a_to_z_and_num(symbols.front().unwrap())
                         {
                             let next_char = symbols.pop_front();
                             curr_ident.push(next_char.unwrap());
@@ -66,9 +67,8 @@ pub mod lex {
                         match ident.as_str() {
                             "make" => tokens.push_back(Token::MAKE),
                             "int" => tokens.push_back(Token::INT),
-                            "string" => tokens.push_back(Token::STRING),
+                            "str" => tokens.push_back(Token::STR),
                             "bool" => tokens.push_back(Token::BOOL),
-
                             _ => tokens.push_back(Token::IDENT(ident.to_string())),
                         }
                     }
@@ -84,6 +84,26 @@ pub mod lex {
                     '}' => tokens.push_back(Token::CCPAREN),
                     '[' => tokens.push_back(Token::OSPAREN),
                     ']' => tokens.push_back(Token::CSPAREN),
+                    '"' => {
+                        tokens.push_back(Token::QUOT);
+                        let mut curr_ident: Vec<char> = Vec::new();
+                        while !symbols.front().is_none()
+                            && Self::is_a_to_z_and_num_and_whitespace(symbols.front().unwrap())
+                        {
+                            let next_char = symbols.pop_front();
+                            curr_ident.push(next_char.unwrap());
+                        }
+                        let ident = curr_ident.iter().collect::<String>();
+                        tokens.push_back(Token::IDENT(ident.to_string()));
+                        let close_quote = symbols.pop_front().unwrap();
+                        if close_quote != '"'{
+                            panic!("expected close \"");
+                        } else {
+                            tokens.push_back(Token::QUOT);
+                        }
+
+
+                    },
                     ' ' | '\n' | '\r'=> continue,
                     _ => panic!(
                         "Dont know who you are, mister {}\nchar at: {}",
@@ -94,8 +114,11 @@ pub mod lex {
             }
             tokens.into()
         }
-        fn is_in_a_to_z(c: &char) -> bool {
-            ('a'..='z').contains(c) || ('A'..='Z').contains(c)
+        fn is_a_to_z_and_num(c: &char) -> bool {
+            ('a'..='z').contains(c) || ('A'..='Z').contains(c) || ('0'..'9').contains(c)
+        }
+        fn is_a_to_z_and_num_and_whitespace(c: &char) -> bool {
+            ('a'..='z').contains(c) || ('A'..='Z').contains(c) || ('0'..'9').contains(c) || *c == ' '
         }
     }
 }

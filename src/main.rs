@@ -18,6 +18,7 @@ fn main() {
     }
     let lexer = Lexer(buf);
     let tokens = lexer.lexify();
+    println!("{:#?}",tokens);
     let mut parser = Parser(tokens);
     let program =  parser.parse_prog();
     let mut generator = Generator::new(program);

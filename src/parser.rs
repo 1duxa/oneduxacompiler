@@ -18,16 +18,19 @@ pub mod parser {
         pub rhs: Box<Expression>,
         pub operator: Token,
     }
+
     #[derive(Debug)]
     pub enum Expression {
         BINEXPR(BinExpr),
         TERM(Term),
+        STRING(String),
     }
     #[derive(Debug)]
     pub enum Term {
         INTLIT(i64),
         IDENT(String),
         PAREN(Box<Expression>),
+        STRING(String)
     }
     pub struct Parser(pub VecDeque<Token>);
     impl Parser {
@@ -69,6 +72,14 @@ pub mod parser {
                         let expr = self.parse_expression(0);
                         self.consume_discard(Token::CPAREN);
                         return Term::PAREN(Box::new(expr));
+                    },
+                    Token::QUOT => {
+                        let str_token = self.consume_ident();
+                        if str_token.is_none() {
+                            panic!("Expected string");
+                        }
+                        self.consume_discard(Token::QUOT);
+                        return Term::STRING(str_token.unwrap());
                     }
                     _ => unimplemented!("term"),
                 }
@@ -81,6 +92,7 @@ pub mod parser {
                 Term::INTLIT(n) => Expression::TERM(Term::INTLIT(n)),
                 Term::IDENT(name) => Expression::TERM(Term::IDENT(name)),
                 Term::PAREN(expr) => *expr,
+                Term::STRING(str) =>return Expression::STRING(str),
             };
             while let Some(operator) = self.0.front() {
                 let prec: Option<i8>;
@@ -104,6 +116,7 @@ pub mod parser {
         fn parse_make_statement(&mut self) -> StatementVariable {
             if let Some(name) = self.consume_ident() {
                 self.consume_discard(Token::EQ);
+
                 let stat = StatementVariable {
                     expr: self.parse_expression(0),
                     ident: name,

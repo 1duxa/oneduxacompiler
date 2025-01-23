@@ -1,3 +1,6 @@
+section .data
+str_14 db 'hello world', 0
+
 global _start
 _start:
      mov rax, 1
@@ -22,6 +25,8 @@ _start:
      pop rbx
      add rax, rbx
      push rax
+     lea rax, [str_14]
+     push rax
      mov rax, 60
-     pop rdi
+     mov rdi, 0
      syscall
