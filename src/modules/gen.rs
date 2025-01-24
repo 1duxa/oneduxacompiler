@@ -1,12 +1,15 @@
 #[allow(unused)]
 pub mod gen {
     use std::collections::HashSet;
-
     use crate::{
-        lex::lex::Token,
-        parser::parser::{BinExpr, Expression, Statement, StatementVariable, Term},
+        modules::lex::lex::Token,
+        modules::parser::parser::{BinExpr, Expression, Statement, StatementVariable, Term},
     };
+    enum AssemblyStatments {
+        SysCallWrite,
 
+        
+    }
     pub struct Generator {
         program: Vec<Statement>,
         start_section: String,
@@ -79,7 +82,8 @@ pub mod gen {
         fn gen_statement(&mut self, statement: &Statement)  {
             match statement {
                 Statement::MAKE(stat) => {self.gen_statement_make(stat);}
-                Statement::ASSIGN(stat) => {}
+                Statement::ASSIGN(stat) => {unimplemented!()},
+                Statement::IF(stat) => {unimplemented!()},
             }
         }
         fn gen_statement_make(&mut self, statement_var: &StatementVariable) {

@@ -1,6 +1,7 @@
 #[allow(unused)]
 pub mod parser {
-    use crate::lex::lex::Token;
+    use crate::modules::lex::lex::Token;
+    
     use std::collections::VecDeque;
     #[derive(Debug)]
     pub struct StatementVariable {
@@ -11,6 +12,7 @@ pub mod parser {
     pub enum Statement {
         MAKE(StatementVariable),
         ASSIGN(StatementVariable),
+        IF(StatementVariable),
     }
     #[derive(Debug)]
     pub struct BinExpr {
@@ -60,7 +62,7 @@ pub mod parser {
                     panic!("Expected token: {:?}", expected)
                 }
             } else {
-                panic!("No value provided");
+                panic!("Expected token: {:?}", expected)
             }
         }
         fn parse_term(&mut self) -> Term {
@@ -134,6 +136,13 @@ pub mod parser {
                 ident,
             }
         }
+        fn parse_if_statement(&mut self, ident: String) -> StatementVariable {
+            self.consume_discard(Token::EQ);
+            StatementVariable {
+                expr: self.parse_expression(0),
+                ident,
+            }
+        }
         pub fn parse_prog(&mut self) -> Vec<Statement> {
             let mut statments: Vec<Statement> = Vec::new();
             while self.0.len() > 0 {
@@ -142,6 +151,9 @@ pub mod parser {
                         Token::MAKE => statments.push(Statement::MAKE(self.parse_make_statement())),
                         Token::IDENT(ident) => {
                             statments.push(Statement::ASSIGN(self.parse_assign_statement(ident)))
+                        }
+                        Token::IF => {
+
                         }
                         _ => panic!("Unknown statement"),
                     }

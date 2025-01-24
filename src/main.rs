@@ -1,12 +1,11 @@
 use std::{fs::File, io::{Read, Write}};
+use modules::{
+    lex::lex::Lexer, 
+    parser::parser::Parser,
+    gen::gen::Generator
+};
 
-use gen::gen::Generator;
-use lex::lex::Lexer;
-use parser::parser::Parser;
-
-mod gen;
-mod lex;
-mod parser;
+mod modules;
 
 fn main() {
     let path = r"src/test.duxa";

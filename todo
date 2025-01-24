@@ -1,13 +1,14 @@
 
-ID   | TASK                              | PRIORITY
-1    | Create types(string,bool)         | 0
-10   | file I/O                          | 1
-9    | scope statement                   | 2
-2    | if statement                      | 3
-2    | while statement                   | 3
-8    | switch statement                  | 4
-3    | Function declaration              | 5
-4    | Allocation                        | 10
-5    | Alloc free                        | 10
-6    | Refactor code                     | 11
-7    | Create graph for parser?          | 999
+ID   | TASK                              | PRIORITY         | STATUS
+1    | Create types(string,bool)         | 0                | DONE
+11   | Strong type (string,bool)         | 0                |
+10   | file I/O                          | 1                | DONE
+9    | scope statement                   | 2                |
+2    | if statement                      | 3                |
+2    | while statement                   | 3                |
+8    | switch statement                  | 4                |
+3    | Function declaration              | 5                |
+4    | Allocation                        | 10               |
+5    | Alloc free                        | 10               |
+6    | Refactor code                     | 11               |
+7    | Create graph for parser?          | 999              |

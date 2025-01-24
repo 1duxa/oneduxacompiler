@@ -1,3 +1,8 @@
 make variable = 54 + 1;
 make second = (variable / 5) + 1;
 make type = "hello world";
+
+
+if variable == 55 {
+    
+}
