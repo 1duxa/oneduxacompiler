@@ -157,7 +157,6 @@ pub mod parser {
             
             if self.peek_token(0).is_some() && *self.peek_token(0).unwrap() == Token::ELSE && self.peek_token(1).is_some() && *self.peek_token(1).unwrap() == Token::IF{
                 self.consume_discard(Token::ELSE);
-                self.consume_discard(Token::IF);
                 if_statment.else_if_scope = Some(Box::new(self.parse_if_statement()));
             } 
             if self.peek_token(0).is_some() && *self.peek_token(0).unwrap() == Token::ELSE{

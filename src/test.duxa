@@ -1,6 +1,11 @@
 {
 if variable {
     make yy = "inside";
+    if 4 + 5 {
+        make bb = 456; 
+    } else if 90092 {
+        
+    }
 } else {
     make bb = "elside";
 }

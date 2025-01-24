@@ -22,7 +22,7 @@ fn main() {
     let program =  parser.parse_prog();
     //let mut generator = Generator::new(program);
 
-    println!("{:?}",program);
+    println!("{:#?}",program);
    /*  let output_file = "./out.asm";
     let output_file =File::create(output_file);
     if output_file.is_err() { panic!("Failed to create output, {:?}",output_file)}
