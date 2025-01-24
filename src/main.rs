@@ -2,7 +2,7 @@ use std::{fs::File, io::{Read, Write}};
 use modules::{
     lex::lex::Lexer, 
     parser::parser::Parser,
-    gen::gen::Generator
+   // gen::gen::Generator
 };
 
 mod modules;
@@ -17,14 +17,15 @@ fn main() {
     }
     let lexer = Lexer(buf);
     let tokens = lexer.lexify();
-    println!("{:#?}",tokens);
+    println!("{:?}",tokens);
     let mut parser = Parser(tokens);
     let program =  parser.parse_prog();
-    let mut generator = Generator::new(program);
+    //let mut generator = Generator::new(program);
 
-    let output_file = "./out.asm";
+    println!("{:?}",program);
+   /*  let output_file = "./out.asm";
     let output_file =File::create(output_file);
     if output_file.is_err() { panic!("Failed to create output, {:?}",output_file)}
     let output_write_result = output_file.unwrap().write_all(generator.gen_prog().as_bytes());
-    output_write_result.unwrap()
+    output_write_result.unwrap()*/
 }

@@ -1,18 +1,26 @@
 #[allow(unused)]
 pub mod parser {
     use crate::modules::lex::lex::Token;
-    
     use std::collections::VecDeque;
+
     #[derive(Debug)]
     pub struct StatementVariable {
         pub ident: String,
         pub expr: Expression,
     }
     #[derive(Debug)]
+    pub struct IfStatement {
+        expression: Expression,
+        if_scope: Option<Vec<Statement>>,
+        else_if_scope: Option<Box<IfStatement>>,
+        else_scope: Option<Vec<Statement>>,   
+    }
+    #[derive(Debug)]
     pub enum Statement {
         MAKE(StatementVariable),
         ASSIGN(StatementVariable),
-        IF(StatementVariable),
+        IF(IfStatement),
+        SCOPE(Option<Vec<Statement>>)
     }
     #[derive(Debug)]
     pub struct BinExpr {
@@ -65,6 +73,9 @@ pub mod parser {
                 panic!("Expected token: {:?}", expected)
             }
         }
+        fn peek_token(&self,idx:usize) -> Option<&Token> {
+            self.0.get(idx)
+        }
         fn parse_term(&mut self) -> Term {
             if let Some(curr_token) = self.0.pop_front() {
                 match curr_token {
@@ -116,6 +127,7 @@ pub mod parser {
         }
 
         fn parse_make_statement(&mut self) -> StatementVariable {
+            self.consume_discard(Token::MAKE);
             if let Some(name) = self.consume_ident() {
                 self.consume_discard(Token::EQ);
 
@@ -129,30 +141,72 @@ pub mod parser {
                 panic!("Expected ident");
             }
         }
-        fn parse_assign_statement(&mut self, ident: String) -> StatementVariable {
+        fn parse_assign_statement(&mut self) -> StatementVariable {
+
             self.consume_discard(Token::EQ);
             StatementVariable {
                 expr: self.parse_expression(0),
-                ident,
+                ident:self.consume_ident().unwrap(),
             }
         }
-        fn parse_if_statement(&mut self, ident: String) -> StatementVariable {
-            self.consume_discard(Token::EQ);
-            StatementVariable {
-                expr: self.parse_expression(0),
-                ident,
+        fn parse_if_statement(&mut self) -> IfStatement {
+            self.consume_discard(Token::IF);
+            let expr = self.parse_expression(0); // this should if .. {}
+            let scope = self.parse_scope();
+            let mut if_statment = IfStatement { expression : expr, if_scope: scope,else_scope:None,else_if_scope:None};
+            
+            if self.peek_token(0).is_some() && *self.peek_token(0).unwrap() == Token::ELSE && self.peek_token(1).is_some() && *self.peek_token(1).unwrap() == Token::IF{
+                self.consume_discard(Token::ELSE);
+                self.consume_discard(Token::IF);
+                if_statment.else_if_scope = Some(Box::new(self.parse_if_statement()));
+            } 
+            if self.peek_token(0).is_some() && *self.peek_token(0).unwrap() == Token::ELSE{
+                self.consume_discard(Token::ELSE);
+                if_statment.else_scope = self.parse_scope();
+            }
+            if_statment
+        }
+        fn parse_scope(&mut self) -> Option<Vec<Statement>> {
+            self.consume_discard(Token::OCPAREN); 
+            let mut statements: Vec<Statement> = Vec::new();
+            
+            while let Some(curr_token) = self.peek_token(0) {
+                if *curr_token == Token::CCPAREN {
+                    self.consume_discard(Token::CCPAREN);
+                    break;
+                }
+                match curr_token {
+                    Token::MAKE => statements.push(Statement::MAKE(self.parse_make_statement())),
+                    Token::IDENT(_) => {
+                        statements.push(Statement::ASSIGN(self.parse_assign_statement()))
+                    }
+                    Token::IF => statements.push(Statement::IF(self.parse_if_statement())),
+                    Token::OCPAREN => statements.push(Statement::SCOPE(self.parse_scope())),
+                    _ => panic!("Unknown statement in scope"),
+                }
+            }
+        
+            if statements.is_empty() {
+                None
+            } else {
+                Some(statements)
             }
         }
+        
         pub fn parse_prog(&mut self) -> Vec<Statement> {
             let mut statments: Vec<Statement> = Vec::new();
             while self.0.len() > 0 {
-                if let Some(token) = self.0.pop_front() {
+                if let Some(token) = self.peek_token(0) {
                     match token {
                         Token::MAKE => statments.push(Statement::MAKE(self.parse_make_statement())),
-                        Token::IDENT(ident) => {
-                            statments.push(Statement::ASSIGN(self.parse_assign_statement(ident)))
+                        Token::IDENT(_) => {
+                            statments.push(Statement::ASSIGN(self.parse_assign_statement()))
                         }
                         Token::IF => {
+                            statments.push(Statement::IF(self.parse_if_statement()))
+                        }
+                        Token::OCPAREN => {
+                            statments.push(Statement::SCOPE(self.parse_scope()))
 
                         }
                         _ => panic!("Unknown statement"),

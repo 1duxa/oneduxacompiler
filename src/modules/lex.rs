@@ -22,7 +22,8 @@ pub mod lex {
         OSPAREN, // [
         CSPAREN, // ]
         QUOT,    // "
-        IF
+        IF,
+        ELSE,
     }
 
     pub struct Lexer(pub String);
@@ -69,6 +70,7 @@ pub mod lex {
                             "str" => tokens.push_back(Token::STR),
                             "bool" => tokens.push_back(Token::BOOL),
                             "if" => tokens.push_back(Token::IF),
+                            "else" => tokens.push_back(Token::ELSE),
                             _ => tokens.push_back(Token::IDENT(ident.to_string())),
                         }
                     }
