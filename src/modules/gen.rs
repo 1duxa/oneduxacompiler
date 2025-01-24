@@ -1,15 +1,12 @@
 #[allow(unused)]
 pub mod gen {
     use std::collections::HashSet;
+    
     use crate::{
+        modules::assembly_commands::AssemblyCommand,
         modules::lex::lex::Token,
         modules::parser::parser::{BinExpr, Expression, Statement, StatementVariable, Term},
     };
-    enum AssemblyStatments {
-        SysCallWrite,
-
-        
-    }
     pub struct Generator {
         program: Vec<Statement>,
         start_section: String,
@@ -111,19 +108,19 @@ pub mod gen {
         }
         fn operator_start_section(operator:&Token) -> String {
             match operator {
-                    Token::PLUS =>"     add rax, rbx".into(),
-                    Token::SUB => "     sub rax, rbx".into(),
-                    Token::MUL => "     mul rbx".into(),
-                    Token::DIV => "     div rbx".into(),
+                    Token::PLUS =>AssemblyCommand::Add("rax", "rbx").to_str(),
+                    Token::SUB =>AssemblyCommand::Subtract("rax", "rbx").to_str(),
+                    Token::MUL => AssemblyCommand::Multiply("rbx").to_str(),
+                    Token::DIV => AssemblyCommand::Divide("rbx").to_str(),
                     _ => panic!("Bad operator, {:#?}",operator),
                 }            
         }
         fn push(&mut self, reg: &str) {
-            self.start_section += format!("     push {}{}", reg, "\n").as_str();
+            self.start_section += AssemblyCommand::Push(reg).to_str().as_ref();
             self.stack_location += 1;
         }
         fn pop(&mut self, reg: &str) {
-            self.start_section += format!("     pop {}{}", reg, "\n").as_str();
+            self.start_section += AssemblyCommand::Pop(reg).to_str().as_ref();
             self.stack_location -= 1;
         }
     }

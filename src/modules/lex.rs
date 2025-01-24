@@ -1,7 +1,5 @@
 pub mod lex {
     use std::collections::VecDeque;
-
-    // TODO: probably slow
     #[derive(Debug, PartialEq)]
     #[allow(unused)]
     pub enum Token {
