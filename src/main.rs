@@ -1,7 +1,7 @@
 use std::{fs::File, io::{Read, Write}};
 use modules::{
     lex::lex::Lexer, 
-    parser::parser::Parser,
+    parser::parser::Parser, to_dot::Dot,
    // gen::gen::Generator
 };
 
@@ -21,8 +21,9 @@ fn main() {
     let mut parser = Parser(tokens);
     let program =  parser.parse_prog();
     //let mut generator = Generator::new(program);
-
-    println!("{:#?}",program);
+    let dot = Dot(program);
+    let mut dot_file =File::create("ast.dot").unwrap();
+    let _ =dot_file.write_all(dot.to_dot().as_bytes());
    /*  let output_file = "./out.asm";
     let output_file =File::create(output_file);
     if output_file.is_err() { panic!("Failed to create output, {:?}",output_file)}

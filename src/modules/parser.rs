@@ -10,10 +10,10 @@ pub mod parser {
     }
     #[derive(Debug)]
     pub struct IfStatement {
-        expression: Expression,
-        if_scope: Option<Vec<Statement>>,
-        else_if_scope: Option<Box<IfStatement>>,
-        else_scope: Option<Vec<Statement>>,   
+        pub expression: Expression,
+        pub if_scope: Option<Vec<Statement>>,
+        pub else_if_scope: Option<Box<IfStatement>>,
+        pub else_scope: Option<Vec<Statement>>,   
     }
     #[derive(Debug)]
     pub enum Statement {
