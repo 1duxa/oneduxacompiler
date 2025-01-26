@@ -81,6 +81,7 @@ pub mod gen {
                 Statement::MAKE(stat) => {self.gen_statement_make(stat);}
                 Statement::ASSIGN(stat) => {unimplemented!()},
                 Statement::IF(stat) => {unimplemented!()},
+                Statement::SCOPE(scope) => {unimplemented!()}
             }
         }
         fn gen_statement_make(&mut self, statement_var: &StatementVariable) {

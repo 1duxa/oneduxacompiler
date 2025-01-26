@@ -1,4 +1,8 @@
 {
+make variable = 345;
+
+if variable {
+
 if variable {
     make yy = "inside";
     if 4 + 5 {
@@ -9,5 +13,5 @@ if variable {
 } else {
     make bb = "elside";
 }
-
+}
 }

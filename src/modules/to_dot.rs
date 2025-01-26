@@ -1,8 +1,8 @@
 use super::parser::parser::{Expression, IfStatement, Statement};
 
-pub struct Dot(pub Vec<Statement>);
+pub struct Dot<'a>(pub &'a Vec<Statement>);
 
-impl Dot {
+impl<'a> Dot<'a> {
     /// Converts the entire program into a DOT representation.
     pub fn to_dot(&self) -> String {
         let mut output = String::from("digraph G {\n");
